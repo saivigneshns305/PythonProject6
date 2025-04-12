@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Meta Tag Extractor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .disclaimer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Meta Tag Extractor</h1>
+    <form method="post">
+        <div class="form-group">
+            <label for="url">Website URL:</label>
+            <input type="text" id="url" name="url" value="{{ url if url else '' }}" required>
+        </div>
+        <button type="submit">Extract Meta Tags</button>
+    </form>
+
+    {% if result %}
+    <h2>Results for: {{ url }}</h2>
+    <pre>{{ result }}</pre>
+    {% endif %}
+
+    <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> This tool is provided for educational and informational purposes only. We do not store or track any URLs entered, and we are not responsible for the content or behavior of any third-party websites.</p>
+    </div>
+</body>
+</html>
