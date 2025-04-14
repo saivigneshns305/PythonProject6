@@ -88,7 +88,7 @@
             border: none;
             text-align: left;
             outline: none;
-            background-color: #f1f1f1;
+            background-color: #00ff001;
             margin-bottom: 5px;
             border-radius: 5px;
         }
@@ -120,7 +120,7 @@
             color: black;
         }
         .tab button:hover {
-            background-color: #ddd;
+            background-color: #000000;
         }
         .tab button.active {
             background-color: #4CAF50;
@@ -237,7 +237,7 @@
     </div>
 
     <script>
-        // Add click event to all collapsible elements
+
         document.addEventListener('DOMContentLoaded', function() {
             var coll = document.getElementsByClassName("collapsible");
             for (var i = 0; i < coll.length; i++) {
@@ -252,11 +252,11 @@
                 });
             }
 
-            // Form submission handler
+
             document.getElementById('extractForm').addEventListener('submit', function(event) {
                 document.getElementById('submitBtn').disabled = true;
 
-                // Create status div if it doesn't exist
+
                 var statusDiv = document.getElementById('crawlStatus');
                 if (!statusDiv) {
                     statusDiv = document.createElement('div');
@@ -265,7 +265,7 @@
                     this.parentNode.insertBefore(statusDiv, this.nextSibling);
                 }
 
-                // Show loading indicator
+
                 statusDiv.innerHTML = '<div class="loader"></div> Crawling website... This may take a few minutes.';
             });
         });
