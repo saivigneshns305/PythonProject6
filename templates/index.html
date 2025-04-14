@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Meta Tag Extractor</title>
+    <title>Website Meta Tag Extractor</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            line-height: 1.6;
         }
         .form-group {
             margin-bottom: 15px;
@@ -17,18 +18,28 @@
             padding: 8px;
             box-sizing: border-box;
         }
+        input[type="number"] {
+            width: 100px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
         button {
             padding: 8px 15px;
             background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #45a049;
         }
         pre {
             background-color: #f5f5f5;
             padding: 15px;
             border-radius: 5px;
             overflow-x: auto;
+            font-size: 0.9rem;
         }
         .disclaimer {
             margin-top: 40px;
@@ -37,25 +48,241 @@
             border-top: 1px solid #ddd;
             padding-top: 15px;
         }
+        .crawl-status {
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .page-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .page-url {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .meta-table th, .meta-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .meta-table th {
+            background-color: #f5f5f5;
+        }
+        .collapsible {
+            cursor: pointer;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            background-color: #f1f1f1;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+        .active, .collapsible:hover {
+            background-color: #e5e5e5;
+        }
+        .content {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            border-radius: 0 0 5px 5px;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+            color: black;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #4CAF50;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-    <h1>Meta Tag Extractor</h1>
-    <form method="post">
+    <h1>Website Meta Tag Extractor</h1>
+    <p>This tool crawls websites and extracts meta tags from multiple pages, organizing them by URL.</p>
+
+    <form method="post" id="extractForm">
         <div class="form-group">
             <label for="url">Website URL:</label>
-            <input type="text" id="url" name="url" value="{{ url if url else '' }}" required>
+            <input type="text" id="url" name="url" value="{{ url if url else '' }}" placeholder="https://example.com" required>
         </div>
-        <button type="submit">Extract Meta Tags</button>
+        <div class="form-group">
+            <label for="max_pages">Maximum Pages:</label>
+            <input type="number" id="max_pages" name="max_pages" value="10" min="1" max="50">
+
+            <label for="max_depth" style="margin-left: 20px;">Maximum Depth:</label>
+            <input type="number" id="max_depth" name="max_depth" value="2" min="1" max="5">
+        </div>
+        <button type="submit" id="submitBtn">Extract Meta Tags</button>
     </form>
 
+    {% if crawl_status %}
+    <div class="crawl-status" id="crawlStatus">
+        {{ crawl_status }}
+    </div>
+    {% endif %}
+
     {% if result %}
-    <h2>Results for: {{ url }}</h2>
-    <pre>{{ result }}</pre>
+    <div class="tab">
+        <button class="tablinks active" onclick="openTab(event, 'OrganizedView')">Organized View</button>
+        <button class="tablinks" onclick="openTab(event, 'RawJson')">Raw JSON</button>
+    </div>
+
+    <div id="OrganizedView" class="tabcontent" style="display: block;">
+        <h2>Results for: {{ url }}</h2>
+        <p>Extracted meta tags from {{ crawled_pages|length if crawled_pages else 0 }} pages.</p>
+
+        {% if crawled_pages %}
+            {% for page_url, page_data in crawled_pages.items() %}
+                <div class="page-card">
+                    <div class="page-url">
+                        <a href="{{ page_url }}" target="_blank">{{ page_url }}</a>
+                        <span style="font-size: 0.9rem; color: #666;">({{ page_data.title }})</span>
+                    </div>
+                    <button class="collapsible">View Meta Tags ({{ page_data.meta_tags|length }})</button>
+                    <div class="content">
+                        <table class="meta-table">
+                            <thead>
+                                <tr>
+                                    <th>Attribute</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tag in page_data.meta_tags %}
+                                    <tr>
+                                        <td>
+                                            {% if tag.name %}
+                                                name="{{ tag.name }}"
+                                            {% elif tag.property %}
+                                                property="{{ tag.property }}"
+                                            {% elif tag['http-equiv'] %}
+                                                http-equiv="{{ tag['http-equiv'] }}"
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ tag.content }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No pages crawled or no meta tags found.</p>
+        {% endif %}
+    </div>
+
+    <div id="RawJson" class="tabcontent">
+        <pre>{{ result }}</pre>
+    </div>
     {% endif %}
 
     <div class="disclaimer">
         <p><strong>Disclaimer:</strong> This tool is provided for educational and informational purposes only. We do not store or track any URLs entered, and we are not responsible for the content or behavior of any third-party websites.</p>
+        <p><strong>Note:</strong> The crawler respects robots.txt files and implements rate limiting to avoid overloading websites. Please use responsibly.</p>
     </div>
+
+    <script>
+        // Add click event to all collapsible elements
+        document.addEventListener('DOMContentLoaded', function() {
+            var coll = document.getElementsByClassName("collapsible");
+            for (var i = 0; i < coll.length; i++) {
+                coll[i].addEventListener("click", function() {
+                    this.classList.toggle("active");
+                    var content = this.nextElementSibling;
+                    if (content.style.display === "block") {
+                        content.style.display = "none";
+                    } else {
+                        content.style.display = "block";
+                    }
+                });
+            }
+
+            // Form submission handler
+            document.getElementById('extractForm').addEventListener('submit', function(event) {
+                document.getElementById('submitBtn').disabled = true;
+
+                // Create status div if it doesn't exist
+                var statusDiv = document.getElementById('crawlStatus');
+                if (!statusDiv) {
+                    statusDiv = document.createElement('div');
+                    statusDiv.id = 'crawlStatus';
+                    statusDiv.className = 'crawl-status';
+                    this.parentNode.insertBefore(statusDiv, this.nextSibling);
+                }
+
+                // Show loading indicator
+                statusDiv.innerHTML = '<div class="loader"></div> Crawling website... This may take a few minutes.';
+            });
+        });
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
 </body>
 </html>
