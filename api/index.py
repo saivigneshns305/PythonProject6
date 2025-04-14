@@ -1,28 +1,25 @@
-import os
-import json
-import logging
-import requests
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
+import requests
+import json
+import logging
+import os
 
 app = Flask(__name__)
 CORS(app)
 logging.basicConfig(level=logging.INFO)
 
-
 def is_valid_url(url):
     parsed = urlparse(url)
     return all([parsed.scheme, parsed.netloc])
-
 
 def extract_meta_tags(url):
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 11.0; Win64; x64) Chrome/100.0.4896.127 Chromium/100.0.4896.127'
         }
-
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -34,14 +31,12 @@ def extract_meta_tags(url):
             for attr, value in tag.attrs.items():
                 tag_dict[attr] = value
             meta_data.append(tag_dict)
-
         return meta_data
 
     except requests.exceptions.RequestException as e:
         return {"error": f"Error fetching URL: {e}"}
     except Exception as e:
         return {"error": f"An error occurred: {e}"}
-
 
 def simplify_meta_tags(meta_tags):
     simplified = {}
@@ -52,12 +47,10 @@ def simplify_meta_tags(meta_tags):
             simplified[name] = content
     return simplified
 
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     result = None
     url = None
-
     if request.method == 'POST':
         url = request.form.get('url')
         if url and is_valid_url(url):
@@ -65,9 +58,7 @@ def index():
             result = json.dumps(meta_tags, indent=2)
         else:
             result = json.dumps({"error": "Invalid URL"}, indent=2)
-
     return render_template('index.html', result=result, url=url)
-
 
 @app.route('/api/extract', methods=['GET'])
 def api_extract():
@@ -78,7 +69,6 @@ def api_extract():
         return jsonify({"error": "A valid URL parameter is required"}), 400
 
     meta_tags = extract_meta_tags(url)
-
     if isinstance(meta_tags, dict) and 'error' in meta_tags:
         return jsonify(meta_tags), 500
 
@@ -87,5 +77,5 @@ def api_extract():
     return jsonify(meta_tags)
 
 
-if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
+def handler(environ, start_response):
+    return app(environ, start_response)
