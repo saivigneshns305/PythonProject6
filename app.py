@@ -1,9 +1,7 @@
-import os
 import json
 import logging
 import requests
 import time
-import re
 from urllib.robotparser import RobotFileParser
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
