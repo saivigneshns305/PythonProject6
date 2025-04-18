@@ -9,10 +9,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin, urldefrag
 from concurrent.futures import ThreadPoolExecutor
 
-from werkzeug.middleware.proxy_fix import ProxyFix
-
-app = Flask(__name__, template_folder='../templates')
-app.wsgi_app = ProxyFix(app.wsgi_app)
+app = Flask(__name__)
 CORS(app)
 logging.basicConfig(level=logging.INFO)
 
@@ -292,7 +289,7 @@ def api_crawl():
 
         return jsonify(crawled_data)
     except Exception as e:
-        return jsonify({"error": f"Error during crawl: {str(e)}"}), 500
+        return jsonify({"error": f"Error during c rawl: {str(e)}"}), 500
 
 @app.route('/api/extract', methods=['GET'])
 def api_extract():
@@ -312,6 +309,5 @@ def api_extract():
         return jsonify(simplify_meta_tags(meta_tags))
     return jsonify(meta_tags)
 
-
-def handler(environ, start_response):
-    return app(environ, start_response)
+if __name__ == "__main__":
+    app.run(debug=True, host='0.0.0.0', port=5000)

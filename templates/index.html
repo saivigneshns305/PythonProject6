@@ -1,177 +1,492 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Meta Tag Extractor</title>
     <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3f37c9;
+            --success: #4cc9f0;
+            --success-light: #90e0ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 1rem;
             line-height: 1.6;
+            color: var(--gray-800);
+            background-color: #fbfbfd;
         }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--gray-600);
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 0.5rem;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 1.25rem;
         }
-        input[type="text"] {
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.95rem;
+        }
+
+        input[type="text"], input[type="number"] {
             width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            -webkit-appearance: none;
         }
-        input[type="number"] {
-            width: 100px;
-            padding: 8px;
-            box-sizing: border-box;
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
         }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 140px;
+        }
+
         button {
-            padding: 8px 15px;
-            background-color: #4CAF50;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
             color: white;
             border: none;
+            border-radius: var(--border-radius);
             cursor: pointer;
             font-size: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
+
         button:hover {
-            background-color: #45a049;
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
         }
+
+        button:disabled {
+            background-color: var(--gray-400);
+            cursor: not-allowed;
+            transform: none;
+        }
+
         pre {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
+            background-color: var(--gray-100);
+            padding: 1rem;
+            border-radius: var(--border-radius);
             overflow-x: auto;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            border: 1px solid var(--gray-200);
+            white-space: pre-wrap;
+            word-break: break-word;
         }
+
         .disclaimer {
-            margin-top: 40px;
-            font-size: 0.9em;
-            color: #666;
-            border-top: 1px solid #ddd;
-            padding-top: 15px;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            border-top: 1px solid var(--gray-200);
+            padding-top: 1.5rem;
         }
+
+        .disclaimer p {
+            margin-bottom: 0.75rem;
+        }
+
         .crawl-status {
-            padding: 10px;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-            margin: 15px 0;
+            padding: 1rem;
+            background-color: var(--gray-100);
+            border-radius: var(--border-radius);
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: center;
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+            font-size: 0.95rem;
         }
+
+        .crawl-status.completed {
+            border-left: 4px solid var(--success);
+        }
+
         .page-card {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
         }
+
+        .page-card:hover {
+            box-shadow: var(--shadow);
+        }
+
         .page-url {
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
+
+        .page-url a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            word-break: break-word;
+        }
+
+        .page-url a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .page-title {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            font-weight: normal;
+        }
+
         .meta-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
+
         .meta-table th, .meta-table td {
-            padding: 8px;
+            padding: 0.75rem;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid var(--gray-200);
+            word-break: break-word;
         }
+
         .meta-table th {
-            background-color: #f5f5f5;
+            background-color: var(--gray-100);
+            font-weight: 600;
         }
+
+        .meta-table td code {
+            word-break: break-all;
+            display: inline-block;
+            max-width: 100%;
+            background-color: var(--gray-100);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+
+        .meta-table tr:hover {
+            background-color: var(--gray-50);
+        }
+
         .collapsible {
             cursor: pointer;
-            padding: 10px;
+            padding: 0.75rem 1rem;
             width: 100%;
             border: none;
             text-align: left;
             outline: none;
-            background-color: #00ff001;
-            margin-bottom: 5px;
-            border-radius: 5px;
+            background: linear-gradient(to right, var(--primary-light), var(--primary));
+            margin-bottom: 0;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+            color: white;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.95rem;
         }
+
+        .collapsible:after {
+            content: '+';
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .collapsible.active:after {
+            content: '−';
+        }
+
         .active, .collapsible:hover {
-            background-color: #e5e5e5;
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            box-shadow: var(--shadow);
         }
+
         .content {
-            padding: 0 18px;
-            display: none;
+            padding: 0;
+            max-height: 0;
             overflow: hidden;
-            background-color: #f9f9f9;
-            border-radius: 0 0 5px 5px;
+            transition: max-height 0.3s ease-out;
+            border: 1px solid var(--gray-300);
+            border-top: none;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
         }
+
         .tab {
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: #f1f1f1;
-            border-radius: 5px 5px 0 0;
+            display: flex;
+            border-bottom: 1px solid var(--gray-300);
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
+
+        .tab::-webkit-scrollbar {
+            display: none;
+        }
+
         .tab button {
-            background-color: inherit;
-            float: left;
+            background-color: transparent;
             border: none;
             outline: none;
             cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-            font-size: 17px;
-            color: black;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.95rem;
+            color: var(--gray-600);
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+            margin-right: 0.75rem;
+            white-space: nowrap;
+            width: auto;
         }
+
         .tab button:hover {
-            background-color: #000000;
+            background-color: transparent;
+            color: var(--primary);
+            transform: none;
         }
+
         .tab button.active {
-            background-color: #4CAF50;
             color: white;
+            background-color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
         }
+
         .tabcontent {
             display: none;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-top: none;
-            border-radius: 0 0 5px 5px;
+            padding: 1.25rem 0;
         }
+
         .loader {
-            border: 5px solid #f3f3f3;
+            border: 3px solid #005EB8;
             border-radius: 50%;
-            border-top: 5px solid #4CAF50;
-            width: 30px;
-            height: 30px;
-            animation: spin 2s linear infinite;
+            border-top: 3px solid white;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
             display: inline-block;
             vertical-align: middle;
-            margin-right: 10px;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
         }
+
+        .completed-icon {
+            width: 20px;
+            height: 20px;
+            background-color: var(--success);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+            font-size: 0.8rem;
+        }
+
+        .result-summary {
+            background-color: var(--gray-100);
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.25rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+            white-space: nowrap;
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Improved Mobile Optimizations */
+        @media (max-width: 480px) {
+            .page-url {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .meta-table th, .meta-table td {
+                padding: 0.6rem;
+                font-size: 0.8rem;
+            }
+
+            .tab button {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .collapsible {
+                padding: 0.6rem 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            .result-summary {
+                padding: 0.6rem 0.75rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .badge {
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Website Meta Tag Extractor</h1>
-    <p>This tool crawls websites and extracts meta tags from multiple pages, organizing them by URL.</p>
+    <div class="header">
+        <h1>Website Meta Tag Extractor</h1>
+        <p class="subtitle">Crawl websites and extract meta tags from multiple pages, neatly organized by URL</p>
+    </div>
 
-    <form method="post" id="extractForm">
-        <div class="form-group">
-            <label for="url">Website URL:</label>
-            <input type="text" id="url" name="url" value="{{ url if url else '' }}" placeholder="https://example.com" required>
-        </div>
-        <div class="form-group">
-            <label for="max_pages">Maximum Pages:</label>
-            <input type="number" id="max_pages" name="max_pages" value="10" min="1" max="50">
-
-            <label for="max_depth" style="margin-left: 20px;">Maximum Depth:</label>
-            <input type="number" id="max_depth" name="max_depth" value="2" min="1" max="5">
-        </div>
-        <button type="submit" id="submitBtn">Extract Meta Tags</button>
-    </form>
+    <div class="card">
+        <form method="post" id="extractForm">
+            <div class="form-group">
+                <label for="url">Website URL</label>
+                <input type="text" id="url" name="url" value="{{ url if url else '' }}" placeholder="https://example.com" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="max_pages">Maximum Pages</label>
+                    <input type="number" id="max_pages" name="max_pages" value="10" min="1" max="50">
+                </div>
+                <div class="form-group">
+                    <label for="max_depth">Maximum Depth</label>
+                    <input type="number" id="max_depth" name="max_depth" value="2" min="1" max="5">
+                </div>
+            </div>
+            <button type="submit" id="submitBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                Extract Meta Tags
+            </button>
+        </form>
+    </div>
 
     {% if crawl_status %}
     <div class="crawl-status" id="crawlStatus">
-        {{ crawl_status }}
+        <div class="loader"></div>
+        <span>{{ crawl_status }}</span>
     </div>
     {% endif %}
 
@@ -182,17 +497,23 @@
     </div>
 
     <div id="OrganizedView" class="tabcontent" style="display: block;">
-        <h2>Results for: {{ url }}</h2>
-        <p>Extracted meta tags from {{ crawled_pages|length if crawled_pages else 0 }} pages.</p>
+        <div class="result-summary">
+            <div>
+                <strong>Results for:</strong> {{ url }}
+            </div>
+            <div>
+                <span class="badge">{{ crawled_pages|length if crawled_pages else 0 }} pages</span>
+            </div>
+        </div>
 
         {% if crawled_pages %}
             {% for page_url, page_data in crawled_pages.items() %}
                 <div class="page-card">
                     <div class="page-url">
-                        <a href="{{ page_url }}" target="_blank">{{ page_url }}</a>
-                        <span style="font-size: 0.9rem; color: #666;">({{ page_data.title }})</span>
+                        <a href="{{ page_url }}" target="_blank" title="{{ page_url }}">{{ page_url }}</a>
+                        <span class="page-title">{{ page_data.title }}</span>
                     </div>
-                    <button class="collapsible">View Meta Tags ({{ page_data.meta_tags|length }})</button>
+                    <button class="collapsible">Meta Tags <span class="badge">{{ page_data.meta_tags|length }}</span></button>
                     <div class="content">
                         <table class="meta-table">
                             <thead>
@@ -206,11 +527,11 @@
                                     <tr>
                                         <td>
                                             {% if tag.name %}
-                                                name="{{ tag.name }}"
+                                                <code>name="{{ tag.name }}"</code>
                                             {% elif tag.property %}
-                                                property="{{ tag.property }}"
+                                                <code>property="{{ tag.property }}"</code>
                                             {% elif tag['http-equiv'] %}
-                                                http-equiv="{{ tag['http-equiv'] }}"
+                                                <code>http-equiv="{{ tag['http-equiv'] }}"</code>
                                             {% endif %}
                                         </td>
                                         <td>{{ tag.content }}</td>
@@ -222,7 +543,10 @@
                 </div>
             {% endfor %}
         {% else %}
-            <p>No pages crawled or no meta tags found.</p>
+            <div class="card" style="text-align: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <p style="margin-top: 1rem;">No pages crawled or no meta tags found.</p>
+            </div>
         {% endif %}
     </div>
 
@@ -237,27 +561,26 @@
     </div>
 
     <script>
-
         document.addEventListener('DOMContentLoaded', function() {
-            var coll = document.getElementsByClassName("collapsible");
-            for (var i = 0; i < coll.length; i++) {
-                coll[i].addEventListener("click", function() {
+            const collapsibles = document.getElementsByClassName("collapsible");
+            for (let i = 0; i < collapsibles.length; i++) {
+                collapsibles[i].addEventListener("click", function() {
                     this.classList.toggle("active");
-                    var content = this.nextElementSibling;
-                    if (content.style.display === "block") {
-                        content.style.display = "none";
+                    const content = this.nextElementSibling;
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        content.style.padding = "0";
                     } else {
-                        content.style.display = "block";
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        content.style.padding = "1rem";
                     }
                 });
             }
 
-
             document.getElementById('extractForm').addEventListener('submit', function(event) {
                 document.getElementById('submitBtn').disabled = true;
 
-
-                var statusDiv = document.getElementById('crawlStatus');
+                let statusDiv = document.getElementById('crawlStatus');
                 if (!statusDiv) {
                     statusDiv = document.createElement('div');
                     statusDiv.id = 'crawlStatus';
@@ -265,21 +588,27 @@
                     this.parentNode.insertBefore(statusDiv, this.nextSibling);
                 }
 
-
-                statusDiv.innerHTML = '<div class="loader"></div> Crawling website... This may take a few minutes.';
+                statusDiv.innerHTML = '<div class="loader"></div><span>Crawling website... This may take a few minutes.</span>';
             });
+
+            if (document.getElementById('OrganizedView') && document.getElementById('crawlStatus')) {
+                const crawlStatus = document.getElementById('crawlStatus');
+                crawlStatus.className = 'crawl-status completed';
+                crawlStatus.innerHTML = '<div class="completed-icon">✓</div><span>Crawl completed successfully!</span>';
+            }
         });
 
         function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            for (let i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
             }
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
+
+            const tablinks = document.getElementsByClassName("tablinks");
+            for (let i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
+
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
         }
